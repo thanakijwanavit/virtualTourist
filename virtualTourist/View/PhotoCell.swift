@@ -59,8 +59,9 @@ class PhotoCell:UICollectionViewCell{
 //            let delegate = SceneDelegate()
 //            let context = delegate.dataController.viewContext
             try viewContext.save()
+            
         } catch {
-            print("Saving Photo imageData Failed")
+            print("Saving Photo imageData Failed \(error.localizedDescription)")
         }
     }
     

@@ -161,22 +161,50 @@ extension MapViewController : MKMapViewDelegate{
         
     }
     
+//    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+//
+//        let reuseId = "pin"
+//
+//        var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
+//
+//        if pinView == nil {
+//            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
+//            pinView!.pinTintColor = .red
+//        }
+//        else {
+//            pinView!.annotation = annotation
+//        }
+//
+//
+//        return pinView
+//    }
+    
+    
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         if !self.editMode {
             // assign selected pin to the selected pin global variable
-            self.selectedPin = annotationToPin(annotation: view.annotation as! MKPointAnnotation, dataController: dataController)
+            self.selectedPin = annotationToPin(annotation: view.annotation as! MKPointAnnotation, fetchResultsController: fetchedResultsController)
             // send pin to the next view
             performSegue(withIdentifier: "PinPhotos", sender: view.annotation?.coordinate)
 //            fetchedResultsController = nil
             mapView.deselectAnnotation(view.annotation, animated: true)
         } else {
-            dataController.viewContext.delete(annotationToPin(annotation: view.annotation as! MKPointAnnotation, dataController: dataController))
-            do { try dataController.viewContext.save()
-            } catch {
-                print("saving error \(error.localizedDescription)")
+            if let pinToDelete = annotationToPin(annotation: view.annotation as! MKPointAnnotation, fetchResultsController: fetchedResultsController){
+                dataController.viewContext.delete(pinToDelete)
+                do { try dataController.viewContext.save()
+                } catch {
+                    print("saving error \(error.localizedDescription)")
+                }
+                print("pin removed from memory")
+                mapView.removeAnnotation(view.annotation!)
             }
-            print("pin removed from memory")
-            mapView.removeAnnotation(view.annotation!)
+//            dataController.viewContext.delete(annotationToPin(annotation: view.annotation as! MKPointAnnotation, dataController: dataController))
+//            do { try dataController.viewContext.save()
+//            } catch {
+//                print("saving error \(error.localizedDescription)")
+//            }
+//            print("pin removed from memory")
+//            mapView.removeAnnotation(view.annotation!)
         }
     }
     

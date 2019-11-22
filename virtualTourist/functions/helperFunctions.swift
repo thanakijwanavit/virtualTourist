@@ -17,12 +17,24 @@ func pinToAnnotations(pin:Pin)->MKAnnotation{
     annotation.title = pin.title
     return annotation
 }
-func annotationToPin(annotation:MKPointAnnotation, dataController: DataController)->Pin{
-    let pin = Pin(context: dataController.viewContext)
-    pin.latitude = annotation.coordinate.latitude
-    pin.longitude = annotation.coordinate.longitude
-    pin.title = annotation.title
-    return pin
+
+func annotationToPin(annotation:MKPointAnnotation, fetchResultsController:NSFetchedResultsController<Pin> )->Pin?{
+//    let pin = Pin(context: dataController.viewContext)
+//    pin.latitude = annotation.coordinate.latitude
+//    pin.longitude = annotation.coordinate.longitude
+//    pin.title = annotation.title
+//    return pin
+    if let pins = fetchResultsController.fetchedObjects {
+        for pin in pins {
+            if pin.latitude == annotation.coordinate.latitude && pin.longitude == annotation.coordinate.longitude {
+                return pin
+            }
+        }
+    } else {
+        print("error there is no pin")
+    }
+    
+    return nil
 }
 
 

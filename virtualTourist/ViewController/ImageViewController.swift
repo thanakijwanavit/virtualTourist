@@ -138,9 +138,22 @@ extension ImageViewController: UICollectionViewDelegate{
             }
         }
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let photoToRemove = fetchedResultsController.object(at: indexPath)
+        dataController.viewContext.delete(photoToRemove)
+        do {
+           try dataController.viewContext.save()
+        } catch {
+            print("deletion faile \(error.localizedDescription)")
+        }
+    }
 }
     
     
+
+
+
 extension ImageViewController: UICollectionViewDataSource{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         print("number of items are \(String(describing: fetchedResultsController.fetchedObjects?.count))")
@@ -165,6 +178,9 @@ extension ImageViewController:NSFetchedResultsControllerDelegate{
         switch type{
         case .delete:
             print("deleting picture")
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
         case .insert:
             print("pictures inserted")
 //            DispatchQueue.main.async {
